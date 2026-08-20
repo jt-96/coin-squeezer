@@ -1,7 +1,17 @@
+import asyncio
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
+from ratelimit import limits, sleep_and_retry
+
+@sleep_and_retry
+@limits(calls=4, period=60)
+def safe_rate_limit_trigger():
+    pass
+
+async def rate_limit_callback(callback_context):
+    await asyncio.to_thread(safe_rate_limit_trigger)
 
 vea_scraper_agent = Agent(
     model='gemini-3.5-flash',
@@ -16,6 +26,8 @@ vea_scraper_agent = Agent(
     instruction=""" You are a web scraper and data extractor specialist
 
     Your job is to scrap the contents of websites, and obtain the name and price of a link provided to you, using the tools available.
+
+    Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
     
     """,
     tools=[
@@ -27,5 +39,6 @@ vea_scraper_agent = Agent(
                 )
             )
         )
-    ]
+    ],
+    before_agent_callback=rate_limit_callback
 )
