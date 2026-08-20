@@ -4,6 +4,17 @@ from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 from ratelimit import limits, sleep_and_retry
+from pydantic import BaseModel, Field
+
+class ScraperOutput(BaseModel):
+    product_name: str = Field(description="The name of the product.")
+    product_price: str = Field(description="The current price of the product.")
+    product_store: str = Field(default="Vea", description="The store from where the product comes from.")
+
+allowed_sites = [
+    "https://www.vea.com.ar/milanesa-nalga-5/p",
+    "https://www.vea.com.ar/milanesa-cuadrada-la-hacienda-2/p"
+]
 
 @sleep_and_retry
 @limits(calls=4, period=60)
@@ -12,24 +23,24 @@ def safe_rate_limit_trigger():
 
 async def rate_limit_callback(callback_context):
     await asyncio.to_thread(safe_rate_limit_trigger)
+    callback_context.state["allowed_sites"] = allowed_sites
 
 vea_scraper_agent = Agent(
+
     model='gemini-3.5-flash',
     name='vea_scraper_agent',
     description='A web scraper that extracts values from the Vea Supermarket site',
-    # instruction=""" You are a web scraper and data extrator specialist.
+    instruction=""" You are a web scraper and data extrator specialist.
+    Your job is to scrap the contents of websites, and obtain the name and price of each of the items provided in {allowed_sites} using the tools provided.
+    Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
+    """,
+    # instruction=""" You are a web scraper and data extractor specialist
 
-    # Your job is to scrap the contents of websites, and obtain the name and price of each of the items provided in that list of sites using the tools provided.
+    # Your job is to scrap the contents of websites, and obtain the name and price of a link provided to you, using the tools available.
 
+    # Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
     
     # """,
-    instruction=""" You are a web scraper and data extractor specialist
-
-    Your job is to scrap the contents of websites, and obtain the name and price of a link provided to you, using the tools available.
-
-    Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
-    
-    """,
     tools=[
         McpToolset(
             connection_params=StdioConnectionParams(
@@ -40,5 +51,6 @@ vea_scraper_agent = Agent(
             )
         )
     ],
+    output_schema=ScraperOutput,
     before_agent_callback=rate_limit_callback
 )
