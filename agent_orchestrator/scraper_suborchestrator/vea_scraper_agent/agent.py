@@ -25,10 +25,12 @@ vea_scraper_agent = Agent(
 
     model='gemini-3.5-flash',
     name='vea_scraper_agent',
-    description='A web scraper that extracts values from the Vea Supermarket site',
+    description='A web scraper that extracts names and prices from the Vea Supermarket site',
     instruction=""" You are a web scraper and data extrator specialist.
     Your job is to scrap the contents of websites, and obtain the name and price of each of the items provided in {allowed_sites} using the tools provided.
     Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
+    The final response should be an Array of JSON objects containing the names and prices of all sites scrapped
+    Format: [{"product": "product_name", "price": "product_price", "store": "product_store"}]
     """,
     tools=[
         McpToolset(
