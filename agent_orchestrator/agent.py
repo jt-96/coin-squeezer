@@ -8,6 +8,8 @@ root_agent = Agent(
     instruction=""" You are an orchestrator specialist
     
     Your job is to make sure that the sub-orchestrator and sub-agents you manage complete their work in the specified order.
+
+    When called, you can perform a run of your agents and orchestrators, there's no need to recieve any type of information before proceeding.
     """,
     sub_agents=[scraper_suborchestrator_agent]
 )
