@@ -5,12 +5,15 @@ from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 from ratelimit import limits, sleep_and_retry
 from pydantic import BaseModel, Field
-from list import allowed_sites
+from .sites_list import allowed_sites
 
-class ScraperOutput(BaseModel):
+class ScrapItem(BaseModel):
     product_name: str = Field(description="The name of the product.")
     product_price: str = Field(description="The current price of the product.")
     product_store: str = Field(default="Vea", description="The store from where the product comes from.")
+
+class ScrapCollection(BaseModel):
+    products: list[ScrapItem] = Field(default=list, description="List of Products")
 
 @sleep_and_retry
 @limits(calls=4, period=60)
@@ -27,10 +30,9 @@ vea_scraper_agent = Agent(
     name='vea_scraper_agent',
     description='A web scraper that extracts names and prices from the Vea Supermarket site',
     instruction=""" You are a web scraper and data extrator specialist.
-    Your job is to scrap the contents of websites, and obtain the name and price of each of the items provided in {allowed_sites} using the tools provided.
+    Your job is to scrap the contents of websites, and obtain the name and price of each of the links provided in {allowed_sites} using the tools available.
     Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
-    The final response should be an Array of JSON objects containing the names and prices of all sites scrapped
-    Format: [{"product": "product_name", "price": "product_price", "store": "product_store"}]
+    
     """,
     tools=[
         McpToolset(
@@ -42,6 +44,6 @@ vea_scraper_agent = Agent(
             )
         )
     ],
-    output_schema=ScraperOutput,
+    output_schema=ScrapCollection,
     before_agent_callback=rate_limit_callback
 )
