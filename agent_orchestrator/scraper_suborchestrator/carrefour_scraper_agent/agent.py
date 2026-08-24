@@ -44,7 +44,7 @@ carrefour_scraper_agent = Agent(
     instruction=""" You are a web scraper and data extrator specialist.
     Your job is to scrap the contents of websites, and obtain the name and price of each of the links provided in {allowed_sites} using the tools available.
     Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
-    
+    Once finished, save the result in the output_key {carrefour_result_data}
     """,
     tools=[
         McpToolset(
@@ -57,6 +57,7 @@ carrefour_scraper_agent = Agent(
         )
     ],
     output_schema=ScrapCollection,
+    output_key="carrefour_result_data",
     before_agent_callback=init_agent_callback,
     before_tool_callback=rate_limit_tool_callback,
     before_model_callback=rate_limit_model_callback
