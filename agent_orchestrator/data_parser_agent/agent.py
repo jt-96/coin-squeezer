@@ -51,10 +51,10 @@ async def rate_limit_model_callback(callback_context, llm_request):
 data_parser_agent = Agent(
     model='gemini-3.5-flash',
     name='data_parser_agent',
-    description='Parses information recieved in a specified manner',
+    description='Parses information obtained from previous subagents into a specified format',
     instruction=""" You are a data parser specialist
     
-    Your role is to parse the data obtained from previous agents in the specified format, so it can be used for the next agent during the order of execution.
+    Your role is to parse the data obtained from previous subagents in the specified format, so it can be used for the next agent during the order of execution.
 
     The dataset that you will used is split into 3 parts:
 
@@ -64,10 +64,10 @@ data_parser_agent = Agent(
 
     - {carrefour_result_data} for Carrefour Supermarket.
 
-    You will return a list of products, each product will contain the name and price from each store.
+    You will return a list of products, each product will contain the name and each price from each store.
 
-    In case of ambiguity between the data sets, you should find the relation in the naming from each product in order to return a single product entry that contains all three prices.
-
+    In case of ambiguity between the data sets, you should find the relation in the naming from each product in order to prevent duplication or mismatching.
+    
     """,
     output_schema=ParsedCollection,
     output_key="parsed_data",
