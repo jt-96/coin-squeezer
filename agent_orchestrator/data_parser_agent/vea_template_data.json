@@ -1,0 +1,14 @@
+{
+    "products": [
+        {
+            "product_name": "Milanesa Nalga",
+            "product_price": "$22.799",
+            "product_store": "Vea"
+        },
+        {
+            "product_name": "Milanesa Cuadrada La Hacienda",
+            "product_price": "$14.999",
+            "product_store": "Vea"
+        }
+    ]
+}

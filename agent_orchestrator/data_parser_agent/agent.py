@@ -2,6 +2,8 @@ import asyncio
 from google.adk.agents.llm_agent import Agent
 from pydantic import BaseModel, Field
 from ratelimit import limits, sleep_and_retry
+import json
+import os
 
 class ParsedItem(BaseModel):
     product_name: str = Field(description="The name of the product.")
@@ -21,6 +23,22 @@ def safe_rate_limit_trigger():
 @limits(calls=5, period=60)
 def safe_model_limit_trigger():
     pass
+
+#Load Mock Data for testing
+script_dir = os.path.dirname(os.path.abspath(__file__))
+path1 = os.path.join(script_dir, 'vea_template_data.json')
+path2 = os.path.join(script_dir, 'mas_template_data.json')
+path3 = os.path.join(script_dir, 'carrefour_template_data.json')
+
+with open(path1, 'r') as f1, open(path2, 'r') as f2, open(path3, 'r') as f3:
+    vea_result_data = json.load(f1)
+    mas_result_data = json.load(f2)
+    carrefour_result_data = json.load(f3)
+
+async def init_agent_callback(callback_context):
+    callback_context.state["vea_result_data"] = vea_result_data
+    callback_context.state["mas_result_data"] = mas_result_data
+    callback_context.state["carrefour_result_data"] = carrefour_result_data
 
 async def rate_limit_tool_callback(tool, args, tool_context):
     await asyncio.to_thread(safe_rate_limit_trigger)
@@ -50,10 +68,10 @@ data_parser_agent = Agent(
 
     In case of ambiguity between the data sets, you should find the relation in the naming from each product in order to return a single product entry that contains all three prices.
 
-    Once finished parsing, the final result will be saved in the output_key {parsed_data}.
     """,
     output_schema=ParsedCollection,
     output_key="parsed_data",
+    before_agent_callback=init_agent_callback,
     before_tool_callback=rate_limit_tool_callback,
     before_model_callback=rate_limit_model_callback
 )
