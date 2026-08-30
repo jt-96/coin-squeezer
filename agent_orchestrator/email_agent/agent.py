@@ -34,7 +34,7 @@ email_agent = Agent(
     
     Your role is to parse the data recieved from the previous agent in the order of execution and send it through email.
 
-    This data should be formatted as a table, containing the name of the product and each price from the stores.
+    This data {parsed_data} should be formatted as a table, containing the name of the product and each price from the stores.
 
     Once formatted, you can add a small message before hand in the body of the email, saying "Offers updated, check here or on the site!".
 
