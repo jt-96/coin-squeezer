@@ -54,8 +54,9 @@ database_agent = Agent(
                         "CLOUD_SQL_MYSQL_DATABASE": os.environ.get("CLOUD_SQL_MYSQL_DATABASE"),
                         "CLOUD_SQL_MYSQL_USER": os.environ.get("CLOUD_SQL_MYSQL_USER"),
                         "CLOUD_SQL_MYSQL_PASSWORD": os.environ.get("CLOUD_SQL_MYSQL_PASSWORD"),
-                    }
-                )
+                    },
+                ),
+                timeout=20
             )
         )
     ],
