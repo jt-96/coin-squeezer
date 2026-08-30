@@ -1,3 +1,5 @@
 .env
 .adk/
+/secrets
 __pycache__
+token.json
