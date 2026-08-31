@@ -46,7 +46,8 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
             user=os.environ.get("CLOUD_SQL_MYSQL_USER"),
             db=os.environ.get("CLOUD_SQL_MYSQL_DATABASE"),
             ip_type=IPTypes.PUBLIC,
-            enable_iam_auth=True
+            enable_iam_auth=True,
+            timeout=20,
         )
         cursor = conn.cursor()
         
@@ -56,14 +57,24 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
             items = items["parsed_data"]
             
         for item in items:
+
+            if isinstance(item, str):
+                try:
+                    item = json.loads(item)
+                except Exception:
+                    continue
+
             product_name = item.get("product_name")
+
+            if not product_name:
+                continue
 
             vea_price = item.get("vea_price", 0)
             mas_price = item.get("mas_price", 0)
             carrefour_price = item.get("carrefour_price", 0)
 
             # Check if the row exists
-            cursor.execute("SELECT id FROM products WHERE name = %s", (product_name,))
+            cursor.execute("SELECT id FROM products WHERE product_name = %s", (product_name,))
             exists = cursor.fetchone()
             
             if exists:
