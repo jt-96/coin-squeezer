@@ -35,11 +35,11 @@ database_agent = Agent(
 
     You will recieve a JSON object {parsed_data}, and for each object in the array, you will check each item and perform the following:
 
-    - If the product name of the current item exists in the table, update the corresponding row with only the values for the prices of each store.
+    - If the product name exists in the table, update the corresponding row with only the values for the prices of each store.
 
     - If the product name does not exists, insert the item as a new row in the table.
 
-    Once finished, respond with 'Database values updated!' to finish.
+    Once finished, only respond with 'Database values updated!' to finish.
     """,
     tools=[
         McpToolset(
