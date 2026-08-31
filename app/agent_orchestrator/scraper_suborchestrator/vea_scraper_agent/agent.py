@@ -1,8 +1,5 @@
 import asyncio
 from google.adk.agents.llm_agent import Agent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
 from ratelimit import limits, sleep_and_retry
 from typing import Literal
 from pydantic import BaseModel, Field
@@ -46,16 +43,6 @@ vea_scraper_agent = Agent(
     Your job is to scrap the contents of websites, and obtain the name and price of each of the links provided in {allowed_vea_sites} using the tools available.
     Only extract text content, ignore raw scripts, tags, stylesheets, or heavy HTML templates.
     """,
-    tools=[
-        McpToolset(
-            connection_params=StdioConnectionParams(
-                server_params=StdioServerParameters(
-                    command="npx",
-                    args=["-y", "chrome-devtools-mcp@latest", "--headless"]
-                )
-            )
-        )
-    ],
     output_schema=ScrapCollection,
     output_key="vea_result_data",
     before_agent_callback=init_agent_callback,
