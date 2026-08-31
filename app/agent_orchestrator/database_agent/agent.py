@@ -1,13 +1,10 @@
-from click import command
 import os
 import json
 import asyncio
 from ratelimit import limits, sleep_and_retry
 from google.adk.agents.llm_agent import Agent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
-import mysql.connector
+from google.cloud.sql.connector import Connector, IPTypes
+import pymysql
 
 @sleep_and_retry
 @limits(calls=4, period=60)
@@ -37,11 +34,19 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
         A string confirming the database action status.
     """
     try:
-        conn = mysql.connector.connect(
-            host=os.environ.get("CLOUD_SQL_MYSQL_INSTANCE"), 
+        connector = Connector()
+        project_id = os.environ.get("CLOUD_SQL_MYSQL_PROJECT")
+        region = os.environ.get("CLOUD_SQL_MYSQL_REGION")
+        instance_name = os.environ.get("CLOUD_SQL_MYSQL_INSTANCE")
+        instance_connection_string = f"{project_id}:{region}:{instance_name}"
+
+        conn = connector.connect(
+            instance_connection_string,
+            "pymysql",
             user=os.environ.get("CLOUD_SQL_MYSQL_USER"),
             password=os.environ.get("CLOUD_SQL_MYSQL_PASSWORD"),
-            database=os.environ.get("CLOUD_SQL_MYSQL_DATABASE")
+            db=os.environ.get("CLOUD_SQL_MYSQL_DATABASE"),
+            ip_type=IPTypes.PUBLIC
         )
         cursor = conn.cursor()
         
@@ -73,6 +78,7 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
         conn.commit()
         cursor.close()
         conn.close()
+        connector.close()
         return "Database values updated successfully!"
         
     except Exception as e:
