@@ -44,7 +44,6 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
             instance_connection_string,
             "pymysql",
             user=os.environ.get("CLOUD_SQL_MYSQL_USER"),
-            password=os.environ.get("CLOUD_SQL_MYSQL_PASSWORD"),
             db=os.environ.get("CLOUD_SQL_MYSQL_DATABASE"),
             ip_type=IPTypes.PUBLIC,
             enable_iam_auth=True
