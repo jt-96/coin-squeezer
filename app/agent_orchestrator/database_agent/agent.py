@@ -1,3 +1,4 @@
+from click import command
 import os
 import asyncio
 from ratelimit import limits, sleep_and_retry
@@ -45,8 +46,8 @@ database_agent = Agent(
         McpToolset(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
-                    command="uvx",
-                    args= ["-y", "@toolbox-sdk/server", "--prebuilt=cloud-sql-mysql", "--stdio"],
+                    command="./app/toolbox",
+                    args= ["--prebuilt=cloud-sql-mysql", "--stdio"],
                     env= {
                         "CLOUD_SQL_MYSQL_PROJECT": os.environ.get("CLOUD_SQL_MYSQL_PROJECT"),
                         "CLOUD_SQL_MYSQL_REGION": os.environ.get("CLOUD_SQL_MYSQL_REGION"),
