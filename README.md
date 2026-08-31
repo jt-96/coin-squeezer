@@ -7,88 +7,94 @@ Agent generated with `agents-cli` version `1.4.2`
 
 ```
 coin-squeezer/
-├── app/         # Core agent code
-│   ├── agent.py               # Main agent logic
-│   ├── fast_api_app.py        # FastAPI Backend server
-│   └── app_utils/             # App utilities and helpers
-├── tests/                     # Unit, integration, and load tests
-├── GEMINI.md                  # AI-assisted development guide
-└── pyproject.toml             # Project dependencies
+├── app/                                    # Core agent code
+│   ├── agent.py                            # Main agent logic
+│   ├── fast_api_app.py                     # FastAPI Backend server
+│   └── app_utils/                          # App utilities and helpers
+│   └── agent_orchestrator                  # Agent Orchestrator
+│       └── scraper_suborchestrator         # Scraper Suborchestrator
+            └── vea_scraper_agent           # Vea Market Data Extractor
+            └── mas_scraper_agent           # MasOnline Market Data Extrator
+            └── carrefour_scraper_agent     # Carrefour Market Data Extractor       
+│       └── data_parser_agent               # Data parser Agent for data unification
+│       └── database_agent                  # Database Agent for Cloud SQL Operations
+│       └── email_agent                     # Email Agent for Notifications
+├── tests/                                  # Unit, integration, and load tests
+├── GEMINI.md                               # AI-assisted development guide
+└── pyproject.toml                          # Project dependencies
 ```
 
-> 💡 **Tip:** Use [Antigravity CLI](https://antigravity.google/) for AI-assisted development - project context is pre-configured in `GEMINI.md`.
+## Architecture Diagram
+
+
 
 ## Requirements
 
 Before you begin, ensure you have:
+- **Clone the project**: Project includes both requirements.txt and uv.lock, requirements.txt is used for local testing and uv.lock for Agent Runtime Deployment.
 - **uv**: Python package manager (used for all dependency management in this project) - [Install](https://docs.astral.sh/uv/getting-started/installation/) ([add packages](https://docs.astral.sh/uv/concepts/dependencies/) with `uv add <package>`)
-- **agents-cli**: Agents CLI - Install with `uv tool install google-agents-cli`
-- **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
 
 
 ## Quick Start
 
-Install `agents-cli` and its skills if not already installed:
+Open terminal in your preferred IDE and setup a virtual environment:
 
 ```bash
-uvx google-agents-cli setup
+python -m venv .venv
 ```
 
-Install required packages:
+Activate the Virtual Environment:
+
+- On Mac/Linux
+```bash
+source .venv/bin/activate
+```
+
+- On Windows (Powershell)
+```None
+venv\Scripts\Activate.ps1
+```
+
+- On Windows (CMD)
+```None
+venv\Scripts\activate.bat
+```
+
+Install dependencies:
 
 ```bash
-agents-cli install
+pip install requirements.txt
+```
+
+Setup an .env file on the root folder with following (THIS WILL BE PROVIDED FOR DEMO):
+```
+# Vertex AI Configuration (default)
+GOOGLE_GENAI_USE_VERTEXAI=""
+GOOGLE_CLOUD_PROJECT=""
+GOOGLE_CLOUD_LOCATION=""
+
+# Database Credentials
+CLOUD_SQL_MYSQL_PROJECT=""
+CLOUD_SQL_MYSQL_REGION=""
+CLOUD_SQL_MYSQL_INSTANCE=""
+CLOUD_SQL_MYSQL_DATABASE=""
+CLOUD_SQL_MYSQL_USER=""
+
+# Email Variables
+GOOGLE_USER_EMAIL_SENDER=""
+GOOGLE_USER_EMAIL_DESTINATION="YOU CAN EDIT THIS WITH YOUR EMAIL TO RECIEVE THE NOTIFICATION" 
 ```
 
 Test the agent with a local web server:
 
 ```bash
-agents-cli playground
+adk web
 ```
 
-You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
+This will connect to my Agent Runtime instance, that has Cloud SQL and Gmail access.
 
-## Commands
+You can simply say something like "Perform a run" and will execute the workflow.
 
-| Command              | Description                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------- |
-| `agents-cli install` | Install dependencies using uv                                                         |
-| `agents-cli playground` | Launch local development environment                                                  |
-| `agents-cli lint`    | Run code quality checks                                                               |
-| `agents-cli eval`    | Evaluate agent behavior (generate, grade, analyze, and more — see `agents-cli eval --help`) |
-| `uv run pytest tests/unit tests/integration` | Run unit and integration tests                                                        |
-| `agents-cli deploy`  | Deploy agent to Agent Runtime                                                                |
-| `agents-cli publish gemini-enterprise` | Register deployed agent to Gemini Enterprise                    || [A2A Inspector](https://github.com/a2aproject/a2a-inspector) | Launch A2A Protocol Inspector                                                        |
+You can also check the website that I built as an alternative to the email, it's deployed in Netlify for frontend, and it's backend on Render, so please give it a moment while it spins up the server.
 
-## 🛠️ Project Management
-
-| Command | What It Does |
-|---------|--------------|
-| `agents-cli scaffold enhance` | Add CI/CD pipelines and Terraform infrastructure |
-| `agents-cli infra cicd` | One-command setup of entire CI/CD pipeline + infrastructure |
-| `agents-cli scaffold upgrade` | Auto-upgrade to latest version while preserving customizations |
-
----
-
-## Development
-
-Edit your agent logic in `app/agent.py` and test with `agents-cli playground` - it auto-reloads on save.
-
-## Deployment
-
-```bash
-gcloud config set project <your-project-id>
-agents-cli deploy
-```
-
-To add CI/CD and Terraform, run `agents-cli scaffold enhance`.
-To set up your production infrastructure, run `agents-cli infra cicd`.
-
-## Observability
-
-Built-in telemetry exports to Cloud Trace, BigQuery, and Cloud Logging.
-
-## A2A Inspector
-
-This agent supports the [A2A Protocol](https://a2a-protocol.org/). Use the [A2A Inspector](https://github.com/a2aproject/a2a-inspector) to test interoperability.
-See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for details.
+https://coin-squeezer.netlify.app/
