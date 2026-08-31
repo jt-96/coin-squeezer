@@ -46,7 +46,8 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
             user=os.environ.get("CLOUD_SQL_MYSQL_USER"),
             password=os.environ.get("CLOUD_SQL_MYSQL_PASSWORD"),
             db=os.environ.get("CLOUD_SQL_MYSQL_DATABASE"),
-            ip_type=IPTypes.PUBLIC
+            ip_type=IPTypes.PUBLIC,
+            enable_iam_auth=True
         )
         cursor = conn.cursor()
         
@@ -63,7 +64,7 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
             carrefour_price = item.get("carrefour_price", 0)
 
             # Check if the row exists
-            cursor.execute("SELECT id FROM products WHERE name = %s", (product_name))
+            cursor.execute("SELECT id FROM products WHERE name = %s", (product_name,))
             exists = cursor.fetchone()
             
             if exists:
@@ -72,7 +73,7 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
                 cursor.execute(query, (vea_price, mas_price, carrefour_price, product_name))
             else:
                 # Insert brand new row
-                query = "INSERT INTO products (product_name, price_vea, price_mas, price_carrefour) VALUES (%s, %s, %s)"
+                query = "INSERT INTO products (product_name, price_vea, price_mas, price_carrefour) VALUES (%s, %s, %s, %s)"
                 cursor.execute(query, (product_name, vea_price, mas_price, carrefour_price))
                 
         conn.commit()
