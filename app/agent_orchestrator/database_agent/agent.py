@@ -45,7 +45,7 @@ database_agent = Agent(
         McpToolset(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
-                    command="npx",
+                    command="uvx",
                     args= ["-y", "@toolbox-sdk/server", "--prebuilt=cloud-sql-mysql", "--stdio"],
                     env= {
                         "CLOUD_SQL_MYSQL_PROJECT": os.environ.get("CLOUD_SQL_MYSQL_PROJECT"),
