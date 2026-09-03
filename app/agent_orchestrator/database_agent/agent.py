@@ -58,12 +58,6 @@ def update_coinsqueezer_database(parsed_data: str) -> str:
             
         for item in items:
 
-            if isinstance(item, str):
-                try:
-                    item = json.loads(item)
-                except Exception:
-                    continue
-
             product_name = item.get("product_name")
 
             if not product_name:

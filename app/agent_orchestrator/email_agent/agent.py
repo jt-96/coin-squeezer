@@ -34,6 +34,8 @@ GOOGLE_USER_EMAIL_SENDER = os.environ.get("GOOGLE_USER_EMAIL_SENDER")
 GOOGLE_USER_EMAIL_DESTINATION = os.environ.get("GOOGLE_USER_EMAIL_DESTINATION")
 GCP_PROJECT_ID = os.environ.get("CLOUD_SQL_MYSQL_PROJECT")
 
+# This feels like a hacky implementation, in order to obtain OAuth Refresh Token and send notification emails
+# Generate a refresh token with your own Gmail OAuth creds through Google's OAuth 2.0 playground and save it in Google's Secret Manager
 def fetch_oauth_config() -> dict:
     """Retrieves the GMAIL_USER_AUTH_CONFIG JSON key text directly from Secret Manager."""
     client = secretmanager.SecretManagerServiceClient()
