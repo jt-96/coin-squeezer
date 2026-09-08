@@ -2,7 +2,7 @@
 
 Price scraper of select products using Agents, saving the result into Cloud SQL and sends email notifications through Gmail.
 
-Using Google's Agentic Development Kit and Antigravity, deployed in Google Cloud's Agent Runtime, Database in Cloud SQL.
+Using Google's Agentic Development Kit and Antigravity IDE, deployed in Google Cloud's Agent Runtime, Database in Cloud SQL.
 
 Agent generated with `agents-cli` version `1.4.2`
 
