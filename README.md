@@ -30,6 +30,7 @@ coin-squeezer/
 ## Architecture Diagram
 
 
+![Project Architecture](Project%20Architecture.png)
 
 ## Requirements
 
